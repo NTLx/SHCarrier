@@ -1,0 +1,191 @@
+/**
+ * Main stylesheet for the Electron application
+ * Contains theme-specific styles for both system and manually selected themes
+ */
+
+/* System theme default styles - Dark mode */
+@media (prefers-color-scheme: dark) {
+  body:not(.light-mode):not(.dark-mode) {
+    background: #333;
+    color: white;
+  }
+}
+
+/* System theme default styles - Light mode */
+@media (prefers-color-scheme: light) {
+  body:not(.light-mode):not(.dark-mode) {
+    background: #ddd;
+    color: black;
+  }
+}
+
+/* Manually selected light theme styles */
+body.light-mode {
+  background: #ddd;
+  color: black;
+}
+
+/* Manually selected dark theme styles */
+body.dark-mode {
+  background: #333;
+  color: white;
+}
+
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Theme control buttons styling */
+button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+body.dark-mode button {
+  background: #555;
+  color: white;
+  border: 1px solid #777;
+}
+
+body.light-mode button {
+  background: #ccc;
+  color: black;
+  border: 1px solid #aaa;
+}
+
+/* File upload container styling */
+.file-upload-container {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+body.dark-mode .file-upload-container {
+  background: #444;
+  border: 1px solid #555;
+}
+
+body.light-mode .file-upload-container {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+}
+
+/* File drop area styling */
+.file-drop-area {
+  border: 2px dashed #aaa;
+  border-radius: 6px;
+  padding: 30px;
+  text-align: center;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+}
+
+.file-drop-area.highlight {
+  border-color: #4a90e2;
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+.file-select-link {
+  color: #4a90e2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* File info styling */
+.file-info {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+body.dark-mode .file-info {
+  background: #555;
+}
+
+body.light-mode .file-info {
+  background: #e0e0e0;
+}
+
+/* Process options styling */
+.process-options {
+  margin: 20px 0;
+}
+
+.option {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.option label {
+  margin-left: 8px;
+}
+
+.option input[type="text"] {
+  margin-left: 8px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+body.dark-mode .option input[type="text"] {
+  background: #555;
+  color: white;
+  border-color: #777;
+}
+
+/* Process button styling */
+.process-button {
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.process-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.process-button:hover:not(:disabled) {
+  background-color: #357ab8;
+}
+
+/* Processing status styling */
+.processing-status {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  min-height: 20px;
+}
+
+.processing-status.success {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+}
+
+.processing-status.error {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #F44336;
+}
+
+body.dark-mode .processing-status.success {
+  color: #81c784;
+}
+
+body.dark-mode .processing-status.error {
+  color: #e57373;
+}

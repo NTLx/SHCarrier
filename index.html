@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Content Security Policy to restrict script sources for security -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <!-- Link to the stylesheet for theme styling -->
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <title>SHCarrier Algorithm Processor</title>
+  </head>
+  <body>
+    <!-- Commented out info paragraph -->
+    <!-- <p id="info"></p> -->
+    
+    <!-- Theme indicator showing current theme source -->
+    <p>Current theme source: <strong id="theme-source">System</strong></p>
+    
+    <!-- Theme control buttons -->
+    <button id="toggle-dark-mode">Toggle Dark Mode</button>
+    <button id="toggle-light-mode">Toggle Light Mode</button>
+    <button id="reset-to-system">Reset to System Theme</button>
+
+    <!-- File upload area -->
+    <div class="file-upload-container">
+      <h2>SHCarrier File Processor</h2>
+      <div id="file-drop-area" class="file-drop-area">
+        <p>Drag and drop a file here or <span class="file-select-link">click to select</span></p>
+        <input type="file" id="file-input" accept=".csv,.tsv" style="display: none;">
+      </div>
+      <div id="file-info" class="file-info">
+        <p>Selected file: <span id="selected-file-path">None</span></p>
+      </div>
+      <div class="process-options">
+        <h3>Processing Options</h3>
+        <div class="option">
+          <input type="checkbox" id="use-area" name="use-area">
+          <label for="use-area">Use peak area data (-Area)</label>
+        </div>
+        <div class="option">
+          <label for="std-name">Standard sample name:</label>
+          <input type="text" id="std-name" name="std-name" value="STD">
+        </div>
+        <div class="option">
+          <input type="checkbox" id="use-gbk" name="use-gbk">
+          <label for="use-gbk">Use GBK encoding (-GBK)</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="dev-mode" name="dev-mode">
+          <label for="dev-mode">Development mode (-dev)</label>
+        </div>
+      </div>
+      <button id="process-file" class="process-button" disabled>Process File</button>
+      <div id="processing-status" class="processing-status"></div>
+    </div>
+  </body>
+  <!-- Load the renderer process script -->
+  <script src="./renderer.js"></script>
+</html>
