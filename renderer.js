@@ -11,23 +11,21 @@ console.log('renderer.js loaded and executing');
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM content loaded, binding event listeners');
 
-  // Get references to DOM elements that control theme switching
-  const darkModeBtn = document.getElementById('toggle-dark-mode');
-  const lightModeBtn = document.getElementById('toggle-light-mode');
-  const resetBtn = document.getElementById('reset-to-system');
-  const themeSource = document.getElementById('theme-source');
-
-  console.log('DOM elements check:', { darkModeBtn, lightModeBtn, resetBtn, themeSource });
+  // Theme is now automatically managed based on system preferences
+  console.log('Theme is now automatically managed based on system preferences');
 
   /**
    * Initialize the application theme
-   * Toggles the theme once to set the initial state based on system preferences
+   * Sets theme to follow system preferences
    */
   const initializeTheme = async () => {
-    console.log('Initializing theme...');
+    console.log('Initializing theme to use system preferences...');
     try {
-      const isDarkMode = await window.darkMode.toggle();
-      console.log('Theme initialization result:', isDarkMode);
+      // Set theme to system
+      await window.darkMode.system();
+      // Get current system theme status
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      console.log('System theme detected:', isDarkMode ? 'Dark' : 'Light');
       updateThemeClass(isDarkMode);
     } catch (error) {
       console.error('Theme initialization failed:', error);
@@ -44,60 +42,10 @@ window.addEventListener('DOMContentLoaded', () => {
     document.body.classList.toggle('light-mode', !isDarkMode);
   };
 
-  // Set up dark mode toggle button event handler
-  if (darkModeBtn) {
-    darkModeBtn.addEventListener('click', async () => {
-      console.log('[Dark Mode] Toggle button clicked');
-      try {
-        const isDarkMode = await window.darkMode.toggle();
-        const mode = isDarkMode ? 'Dark' : 'Light';
-        themeSource.innerHTML = mode;
-        updateThemeClass(isDarkMode);
-        console.log('[Dark Mode] UI updated to:', mode);
-      } catch (error) {
-        console.error('[Dark Mode] Toggle failed:', error);
-      }
-    });
-  } else {
-    console.error('toggle-dark-mode button not found');
-  }
-
-  // Set up system theme reset button event handler
-  if (resetBtn) {
-    resetBtn.addEventListener('click', async () => {
-      console.log('[Dark Mode] Reset button clicked');
-      try {
-        await window.darkMode.system();
-        themeSource.innerHTML = 'System';
-        console.log('[Dark Mode] System theme settings restored');
-      } catch (error) {
-        console.error('[Dark Mode] Reset failed:', error);
-      }
-    });
-  } else {
-    console.error('reset-to-system button not found');
-  }
-
-  // Set up light mode button event handler
-  if (lightModeBtn) {
-    lightModeBtn.addEventListener('click', async () => {
-      console.log('[Light Mode] Toggle button clicked');
-      try {
-        await window.darkMode.light();
-        themeSource.innerHTML = 'Light';
-        updateThemeClass(false);
-        console.log('[Light Mode] UI updated to: Light');
-      } catch (error) {
-        console.error('[Light Mode] Toggle failed:', error);
-      }
-    });
-  } else {
-    console.error('toggle-light-mode button not found');
-  }
+  // Theme control buttons have been removed - theme now automatically follows system preferences
 
   /**
    * Listen for theme update events from the main process
-   * This allows the UI to stay in sync when the theme changes
    * from outside the renderer (e.g., system theme changes)
    */
   try {
@@ -114,9 +62,8 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeTheme();
 
   // Get references to file upload DOM elements
-  const fileDropArea = document.getElementById('file-drop-area');
   const fileInput = document.getElementById('file-input');
-  const fileSelectLink = document.querySelector('.file-select-link');
+  const selectFileButton = document.getElementById('select-file-button');
   const selectedFilePath = document.getElementById('selected-file-path');
   const processFileBtn = document.getElementById('process-file');
   const processingStatus = document.getElementById('processing-status');
@@ -125,7 +72,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const useAreaCheckbox = document.getElementById('use-area');
   const stdNameInput = document.getElementById('std-name');
   const useGBKCheckbox = document.getElementById('use-gbk');
-  const devModeCheckbox = document.getElementById('dev-mode');
+  // Development mode is now hidden from UI and disabled by default
+  const devModeCheckbox = { checked: false }; // Simulate checkbox element with dev mode disabled
 
   // Variable to store the currently selected file path
   let currentFilePath = null;
@@ -147,52 +95,9 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Handle file drop events
-   * @param {DragEvent} event - The drag event
+   * Handle file select button click
    */
-  const handleDrop = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    fileDropArea.classList.remove('highlight');
-    
-    if (event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
-      
-      // Check if the file is a CSV or TSV file
-      if (file.name.endsWith('.csv') || file.name.endsWith('.tsv')) {
-        // 在 Electron 中，我们需要使用 IPC 通信来获取文件路径
-        // 因为拖拽的文件对象可能没有直接的 path 属性
-        console.log('[File Upload] Drag file detected:', file.name);
-        
-        // 使用 openFileDialog 的方式不适合拖拽场景
-        // 我们应该直接使用文件的路径（如果可用）或者使用其他方法
-        if (file.path) {
-          // Windows 平台通常可以直接获取 path
-          console.log('[File Upload] Drag file path available:', file.path);
-          updateSelectedFile(file.path);
-        } else {
-          // 对于其他平台或者无法获取路径的情况
-          // 我们可以尝试使用 Electron 的 dialog API
-          console.log('[File Upload] Drag file path not available, using dialog API');
-          openFileDialog().then(result => {
-            if (!result.canceled && result.filePath) {
-              updateSelectedFile(result.filePath);
-            }
-          });
-        }
-      } else {
-        processingStatus.textContent = 'Error: Please select a CSV or TSV file.';
-        processingStatus.classList.add('error');
-        console.error('[File Upload] Invalid file type:', file.name);
-      }
-    }
-  };
-
-  /**
-   * Handle file select link click
-   */
-  const handleFileSelectClick = () => {
+  const handleSelectFileButtonClick = () => {
     // Directly open the file dialog without using the input element
     openFileDialog();
   };
@@ -222,26 +127,6 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('[File Upload] Failed to open file dialog:', error);
     }
-  };
-
-  /**
-   * Handle file drag over events
-   * @param {DragEvent} event - The drag event
-   */
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    fileDropArea.classList.add('highlight');
-  };
-
-  /**
-   * Handle file drag leave events
-   * @param {DragEvent} event - The drag event
-   */
-  const handleDragLeave = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    fileDropArea.classList.remove('highlight');
   };
 
   /**
@@ -349,15 +234,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Set up file drop area event listeners
-  if (fileDropArea) {
-    fileDropArea.addEventListener('drop', handleDrop);
-    fileDropArea.addEventListener('dragover', handleDragOver);
-    fileDropArea.addEventListener('dragleave', handleDragLeave);
-  } else {
-    console.error('file-drop-area element not found');
-  }
-
   // Set up file input event listener
   if (fileInput) {
     fileInput.addEventListener('change', handleFileInputChange);
@@ -365,14 +241,11 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('file-input element not found');
   }
 
-  // Set up file select link event listener
-  if (fileSelectLink) {
-    fileSelectLink.addEventListener('click', (event) => {
-      event.preventDefault();
-      handleFileSelectClick();
-    });
+  // Set up select file button event listener
+  if (selectFileButton) {
+    selectFileButton.addEventListener('click', handleSelectFileButtonClick);
   } else {
-    console.error('file-select-link element not found');
+    console.error('select-file-button element not found');
   }
 
   // Set up process file button event listener

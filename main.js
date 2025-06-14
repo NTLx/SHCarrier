@@ -15,10 +15,11 @@ const fs = require('fs')
  * Sets up the preload script and loads the main HTML file
  */
 const createWindow = () => {
-  // Create a new browser window with specific dimensions and security settings
+  // Create a new browser window with dimensions of 800x800
   const win = new BrowserWindow({
     width: 800,
-    height: 700,
+    height: 800,
+    resizable: false,
     webPreferences: {
       // Preload script runs before the renderer process starts
       preload: path.join(__dirname, 'preload.js')
@@ -126,12 +127,49 @@ app.whenReady().then(() => {
       args.push('-dev');
     }
     
-    console.log('[SHCarrier] Command:', path.join(__dirname, 'SHCarrier.exe'), args.join(' '));
+    // Get the correct path to the executable based on the environment
+    // In development mode (or when not explicitly in production), use __dirname
+    // In production build, use process.resourcesPath
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isPackaged = app.isPackaged;
+    
+    // If either NODE_ENV is explicitly set to 'production' OR the app is packaged,
+    // consider it production mode
+    const appPath = (isProduction || isPackaged) ? process.resourcesPath : __dirname;
+    const exePath = path.join(appPath, 'SHCarrier.exe');
+    
+    console.log('[SHCarrier] Is production env:', isProduction);
+    console.log('[SHCarrier] Is packaged:', isPackaged);
+    console.log('[SHCarrier] Application path:', appPath);
+    console.log('[SHCarrier] Executable path:', exePath);
+    console.log('[SHCarrier] Command:', exePath, args.join(' '));
     
     try {
+      // First verify the executable exists
+      if (!fs.existsSync(exePath)) {
+        console.error('[SHCarrier] Executable not found at path:', exePath);
+        return { 
+          success: false, 
+          error: `Executable not found: ${exePath}. Please ensure SHCarrier.exe is present in the application directory.` 
+        };
+      }
+      
       // Execute SHCarrier.exe with the provided arguments
       return new Promise((resolve, reject) => {
-        const shCarrier = spawn(path.join(__dirname, 'SHCarrier.exe'), args);
+        console.log('[SHCarrier] Spawning process with working directory:', path.dirname(filePath));
+        
+        // Use try-catch around spawn to catch any immediate errors
+        let shCarrier;
+        try {
+          shCarrier = spawn(exePath, args, { 
+            cwd: path.dirname(filePath),
+            shell: false,  // Don't use shell to avoid command injection
+            windowsHide: false  // Allow window to show for debugging purposes
+          });
+        } catch (spawnError) {
+          console.error('[SHCarrier] Error during spawn:', spawnError);
+          return reject({ success: false, error: `Failed to launch process: ${spawnError.message}` });
+        }
         
         let stdout = '';
         let stderr = '';
@@ -205,8 +243,8 @@ app.whenReady().then(() => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
-        { name: 'CSV/TSV Files', extensions: ['csv', 'tsv'] },
-        { name: 'All Files', extensions: ['*'] }
+        { name: 'Data Files', extensions: ['txt', 'csv', 'tsv'] },
+        { name: 'All Files', extensions: [] } // 尝试使用具体文件类型列表代替通配符
       ]
     });
     

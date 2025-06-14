@@ -77,68 +77,10 @@ body.light-mode .file-upload-container {
   border: 1px solid #ccc;
 }
 
-/* File drop area styling */
-.file-drop-area {
-  border: 2px dashed #aaa;
-  border-radius: 6px;
-  padding: 30px;
+/* File upload buttons styling */
+.file-upload-buttons {
+  margin: 20px 0;
   text-align: center;
-  margin: 20px 0;
-  transition: all 0.3s ease;
-}
-
-.file-drop-area.highlight {
-  border-color: #4a90e2;
-  background-color: rgba(74, 144, 226, 0.1);
-}
-
-.file-select-link {
-  color: #4a90e2;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* File info styling */
-.file-info {
-  margin: 15px 0;
-  padding: 10px;
-  border-radius: 4px;
-}
-
-body.dark-mode .file-info {
-  background: #555;
-}
-
-body.light-mode .file-info {
-  background: #e0e0e0;
-}
-
-/* Process options styling */
-.process-options {
-  margin: 20px 0;
-}
-
-.option {
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-}
-
-.option label {
-  margin-left: 8px;
-}
-
-.option input[type="text"] {
-  margin-left: 8px;
-  padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-body.dark-mode .option input[type="text"] {
-  background: #555;
-  color: white;
-  border-color: #777;
 }
 
 /* Process button styling */
@@ -150,8 +92,13 @@ body.dark-mode .option input[type="text"] {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
+  transition: background-color 0.3s ease;
   margin-top: 20px;
+  display: inline-block;
+}
+
+.process-button:hover {
+  background-color: #357ab8;
 }
 
 .process-button:disabled {
@@ -160,13 +107,37 @@ body.dark-mode .option input[type="text"] {
   cursor: not-allowed;
 }
 
-.process-button:hover:not(:disabled) {
-  background-color: #357ab8;
+/* File info styling */
+.file-info {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+body.dark-mode .file-info {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Processing options styling */
+.process-options {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+body.dark-mode .process-options {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.option {
+  margin: 10px 0;
 }
 
 /* Processing status styling */
 .processing-status {
-  margin-top: 15px;
+  margin-top: 20px;
   padding: 10px;
   border-radius: 4px;
   min-height: 20px;
@@ -174,18 +145,31 @@ body.dark-mode .option input[type="text"] {
 
 .processing-status.success {
   background-color: rgba(76, 175, 80, 0.2);
-  color: #4CAF50;
+  color: #2e7d32;
+}
+
+body.dark-mode .processing-status.success {
+  background-color: rgba(76, 175, 80, 0.3);
+  color: #81c784;
 }
 
 .processing-status.error {
   background-color: rgba(244, 67, 54, 0.2);
-  color: #F44336;
-}
-
-body.dark-mode .processing-status.success {
-  color: #81c784;
+  color: #c62828;
 }
 
 body.dark-mode .processing-status.error {
+  background-color: rgba(244, 67, 54, 0.3);
   color: #e57373;
+}
+
+/* Output file link styling */
+.output-file-link {
+  color: #2196f3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+body.dark-mode .output-file-link {
+  color: #64b5f6;
 }

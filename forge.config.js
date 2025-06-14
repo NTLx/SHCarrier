@@ -4,6 +4,9 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    extraResource: [
+      './SHCarrier.exe'  // 确保使用相对路径，这样electron-forge能正确找到文件
+    ]
   },
   rebuildConfig: {},
   makers: [
